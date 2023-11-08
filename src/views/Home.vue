@@ -10,6 +10,7 @@
             width="100%"
             color="blue"
             rounded="lg"
+            @click="go('/consults')"
           > 
             <span>
               <v-icon class="mr-2">mdi-hospital-box-outline</v-icon>
@@ -22,6 +23,7 @@
             width="100%"
             color="purple"
             rounded="lg"
+            @click="go('/consult-request')"
           >
             <v-icon class="mr-2">mdi-doctor</v-icon>
             Solicitar Consulta
@@ -54,7 +56,18 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+
+export default defineComponent({
+  name: 'Home',
+  methods: {
+    go(router: string) {
+      this.$router.push(router)
+    }
+  }
+})
 </script>
 
 <style lang="css" scoped>
