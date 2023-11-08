@@ -1,47 +1,87 @@
 <template>
-  <v-app id="inspire">
+  <v-app>
     <!-- <Register/> -->
-    <Login v-if="!authenticated" @logged="authenticated = true"/>
-    <div v-else>
-      <v-navigation-drawer v-model="drawer">
-          <v-list>
-            <v-list-item
-              prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-              title="Sandra Adams"
-              subtitle="sandra_a88@gmailcom"
-            ></v-list-item>
-          </v-list>
-  
-          <v-divider></v-divider>
-  
+    <!-- <Login v-if="!authenticated" @logged="authenticated = true"/> -->
+    <div class="app">
+      <v-navigation-drawer class="elevation-1" v-model="drawer">
+          <div class="pa-4">
+            <span class="text-h6">Smart UBS</span>
+          </div>
+          <v-divider ></v-divider>
           <v-list density="compact" nav>
-            <v-list-item prepend-icon="mdi-hospital-box-outline" title="Minhas consultas" value="myfiles"></v-list-item>
-            <v-list-item prepend-icon="mdi-doctor" title="Solicitar consulta" value="shared"></v-list-item>
+            <v-list-item @click="routerTo('/consults')" prepend-icon="mdi-hospital-box-outline" title="Minhas consultas" value="myfiles"></v-list-item>
+            <v-list-item @click="routerTo('/consult-request')" prepend-icon="mdi-doctor" title="Solicitar consulta" value="shared"></v-list-item>
             <v-list-item prepend-icon="mdi-hospital-building" title="UBS proximas de mim" value="starred"></v-list-item>
           </v-list>
         </v-navigation-drawer>
-  
-      <v-app-bar>
-        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-  
-        <v-app-bar-title>Smart UBS</v-app-bar-title>
-      </v-app-bar>
-  
       <v-main>
+        <div class="app-bar d-flex align-center justify-space-between rounded-lg elevation-1 ma-6 pa-2">
+          <div>
+            <v-btn
+              icon
+              x-small
+              elevation="0"
+              @click="drawer = !drawer"
+            >
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+          </div>
+          <div class="d-flex align-center">
+            <v-btn
+              class="mr-2"
+              icon
+              x-small
+              elevation="0"
+            >
+              <v-badge content="2" color="error">
+                <v-icon>mdi-bell-outline</v-icon>
+              </v-badge>
+            </v-btn>
+            <div>
+              <v-avatar>
+                <v-img
+                  src="https://cdn.vuetifyjs.com/images/john.jpg"
+                  alt="John"
+                ></v-img>
+              </v-avatar>
+            </div>
+          </div>
+        </div>
         <router-view></router-view>
       </v-main>
     </div>
   </v-app>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-import { ref } from 'vue'
-import Login from './views/Login.vue';
-import Register from './views/Register.vue';
+export default defineComponent({
+  name: 'App',
+  data() {
+    return {
+      drawer: true,
+      authenticated: false
+    }
+  },
+  methods: {
+    routerTo(router: string) {
+      this.$router.push(router)
+    }
+  }
+})
 
-const drawer = ref(null)
-
-const authenticated = ref(false);
 
 </script>
+
+<style>
+.app {
+  background: #f4f5fa;
+  width: 100vw;
+  height: 100vh;
+}
+
+.app-bar {
+  background: white;
+}
+</style>
