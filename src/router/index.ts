@@ -3,17 +3,17 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/home',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
+    path: '/',
+    component: () => import('@/views/Home.vue'),
   },
   {
     path: '/consults',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/ConsultList.vue'),
+    component: () => import('@/views/ConsultList.vue'),
   },
   {
     path: '/consult-request',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/ConsultRequest.vue'),
-  },
+    component: () => import('@/views/ConsultRequest.vue'),
+  }
 ]
 
 const router = createRouter({

@@ -9,32 +9,39 @@
           <v-row>
             <v-col cols="6">
               <label for="consult-date-input">Data da consulta:</label>
-              <input type="date" id="consult-date-input" class="pa-4" name="trip-start" :value="consultDate"/>
+              <input type="datetime-local" id="consult-date-input" class="pa-4" name="trip-start" v-model="consultRequest.realizationConsultDate"/>
             </v-col>
             <v-col cols="6">
               <v-select
+                v-model:model-value="consultRequest.priority"
                 class="mt-5"
                 label="Prioridade"
                 rounded="lg"
                 variant="outlined"
-                :items="['Alta', 'Media', 'Baixa']"
+                item-value="value"
+                item-title="description"
+                :items="priorityList"
               ></v-select>
             </v-col>
           </v-row>
           <v-row no-gutters>
             <v-col cols="12" md="6">
               <v-select
+                v-model:model-value="consultRequest.speciality"
                 class="mt-5"
                 label="Especialidade"
                 rounded="lg"
                 variant="outlined"
-                :items="['Psicologo', 'Fisioterapeuta', 'Cardiologista']"
+                item-value="value"
+                item-title="description"
+                :items="specialtyList"
               ></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
               <v-textarea
+                v-model:model-value="consultRequest.details"
                 rounded="lg"
                 label="Detalhes"
                 variant="outlined"
@@ -48,6 +55,7 @@
                 color="blue"
                 rounded="lg"
                 elevation="0"
+                @click="createConsultRequest"
               >
                 Solicitar
               </v-btn>
@@ -70,25 +78,41 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-
+import CreateConsultRequest from '@/domain/CreateConsultRequest';
+import ConsultRequestService from '@/domain/ConsultRequestService';
 
 export default defineComponent({
   name: 'ConsultRequest',
   data() {
     return {
-      consultDate: '',
       menu: false,
       input: '',
+      consultRequest: new CreateConsultRequest(),
+      priorityList: [
+        {
+          value: 'HIGH',
+          description: 'Alta'
+        },
+        {
+          value: 'MEDIUM',
+          description: 'Media'
+        },
+        {
+          value: 'LOW',
+          description: 'Baixa'
+        }
+      ],
+      specialtyList: [
+        {
+          value: 'PSYCHOLOGIST',
+          description: 'Psicologo'
+        },
+        {
+          value: 'PHYSIOTHERAPIST',
+          description: 'Fisioterapeuta'
+        }
+      ]
     }
-  },
-   computed: {
-    dateFormatted() {
-      return this.input ? new Date(this.input) : "";
-    },
-    getDate() {
-      const date = this.input ? new Date(this.input) : new Date()
-      return [date]
-    },
   },
   methods: {
     onChange(val: any) {
@@ -98,6 +122,10 @@ export default defineComponent({
       this.menu = false;
       console.error(val)
     },
+    createConsultRequest() {
+      this.consultRequest.patientId = localStorage.getItem('patientId')
+      ConsultRequestService.create(this.consultRequest)
+    }
   },
 })
 </script>

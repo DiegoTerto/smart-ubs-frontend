@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <!-- <Register/> -->
-    <!-- <Login v-if="!authenticated" @logged="authenticated = true"/> -->
-    <div class="app">
+    <Register @changeMode="isLogin = !isLogin" v-if="!isLogin && !authenticated" @logged="authenticated = true"/>
+    <Login @changeMode="isLogin = !isLogin" v-if="isLogin && !authenticated" @logged="authenticated = true"/>
+    <div class="app" v-if="authenticated">
       <v-navigation-drawer class="elevation-1" v-model="drawer">
           <div class="pa-4">
             <span class="text-h6">Smart UBS</span>
@@ -55,13 +55,20 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Login from './views/Login.vue'
+import Register from './views/Register.vue'
 
 export default defineComponent({
   name: 'App',
+  components: {
+    Login,
+    Register,
+  },
   data() {
     return {
       drawer: true,
-      authenticated: false
+      authenticated: false,
+      isLogin: true,
     }
   },
   methods: {

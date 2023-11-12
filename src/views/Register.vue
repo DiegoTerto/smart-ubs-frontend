@@ -17,10 +17,12 @@
     <div v-if="step === 1">
       <div class="text-subtitle-1 text-medium-emphasis">Email</div>
       <v-text-field
+        v-model:model-value="person.email"
         density="compact"
         placeholder="Insira seu email"
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
+        @update:model-value="setUserEmail"
       ></v-text-field>
 
         <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
@@ -28,6 +30,7 @@
         </div>
 
         <v-text-field
+          v-model:model-value="person.users.password"
           :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           :type="showPassword ? 'text' : 'password'"
           density="compact"
@@ -41,6 +44,7 @@
       <div v-if="step === 2">
         <div class="text-subtitle-1 text-medium-emphasis">Nome completo</div>
         <v-text-field
+          v-model:model-value="person.name"
           density="compact"
           placeholder="Insira seu nome"
           prepend-inner-icon="mdi-account"
@@ -52,6 +56,7 @@
         </div>
 
         <v-text-field
+          v-model:model-value="person.document"
           type="text"
           density="compact"
           placeholder="Insira seu CPF"
@@ -64,6 +69,7 @@
         </div>
 
         <v-text-field
+          v-model:model-value="person.cardSUSNumber"
           type="text"
           density="compact"
           placeholder="Insira o numero do cartao SUS"
@@ -72,11 +78,39 @@
         ></v-text-field>
 
         <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+          Telefone
+        </div>
+
+        <v-text-field
+          v-model:model-value="person.phone"
+          type="text"
+          density="compact"
+          placeholder="Informe o seu numero de telefone"
+          prepend-inner-icon="mdi-phone"
+          variant="outlined"
+          prefix="+55"
+        ></v-text-field>
+
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
           Data de Nascimento
         </div>
         <div>
-          <input class="input-date mb-4" type="date">
+          <input class="input-date mb-4" type="date" v-model="person.birthDate">
         </div>
+
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+          Sexo
+        </div>
+
+        <v-select
+          v-model:model-value="person.sex"
+          variant="outlined"
+          density="compact"
+          placeholder="Selecione o seu sexo"
+          item-value="value"
+          item-title="description"
+          :items="sexList"
+        ></v-select>
       </div>
 
       <v-btn
@@ -86,33 +120,77 @@
         size="large"
         variant="tonal"
         @click="step = 2"
+        v-if="step === 1"
       >
-        {{step === 1 ? 'Proximo' : 'Cadastrar'}}
+        Proximo
+      </v-btn>
+      <v-btn
+        block
+        class="mb-8"
+        color="blue"
+        size="large"
+        variant="tonal"
+        v-if="step === 2"
+        @click="createPerson"
+      >
+        Cadastrar'
       </v-btn>
 
       <v-card-text class="text-center">
-        <a
-          class="text-blue text-decoration-none"
-          href="#"
-          rel="noopener noreferrer"
-          target="_blank"
+        <span
+          class="text-blue text-decoration-none change-mode"
+          @click="changeMode"
         >
           Voltar para login <v-icon icon="mdi-chevron-right"></v-icon>
-        </a>
+        </span>
       </v-card-text>
     </v-card>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed } from 'vue'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import Person from '@/domain/Person';
+import PersonService from '@/domain/PersonService'
 
-let showPassword = ref(false);
-let step = ref(1);
-
-function changeShowPassword() {
-  showPassword.value = !showPassword.value
-}
+export default defineComponent({
+  name: 'Register',
+  data() {
+    return {
+      showPassword: false,
+      step: 1,
+      person: new Person(),
+      sexList: [
+        {
+          value: 'MALE',
+          description: 'Masculino'
+        },
+        {
+          value: 'FEMALE',
+          description: 'Feminino'
+        }
+      ]
+    }
+  },
+  methods: {
+    changeShowPassword() {
+      this.showPassword = !this.showPassword
+    },
+    setUserEmail(value: string) {
+      this.person.users.login = value
+    },
+    createPerson() {
+      if (this.step < 2) return 
+      PersonService.create(this.person).then((json) => {
+        localStorage.setItem('patientId', json.id);
+        this.$emit('logged')
+      });
+    },
+    changeMode() {
+      this.$emit('changeMode')
+    }
+  }
+})
 </script>
 
 <style lang="css" scoped>
@@ -121,5 +199,9 @@ function changeShowPassword() {
   padding: 8px;
   border-radius: 4px;
   width: 100%;
+}
+
+.change-mode:hover {
+  cursor: pointer;
 }
 </style>

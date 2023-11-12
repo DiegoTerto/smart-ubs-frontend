@@ -16,6 +16,7 @@
       <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
       <v-text-field
+        v-model:model-value="user.login"
         density="compact"
         placeholder="Insira seu email"
         prepend-inner-icon="mdi-email-outline"
@@ -27,6 +28,7 @@
       </div>
 
       <v-text-field
+        v-model:model-value="user.password"
         :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
         :type="showPassword ? 'text' : 'password'"
         density="compact"
@@ -42,31 +44,55 @@
         color="blue"
         size="large"
         variant="tonal"
-        @click="$emit('logged')"
+        @click="login"
       >
         Entrar
       </v-btn>
 
       <v-card-text class="text-center">
-        <a
-          class="text-blue text-decoration-none"
-          href="#"
-          rel="noopener noreferrer"
-          target="_blank"
+        <span
+          class="text-blue text-decoration-none change-mode"
+          @click="changeMode"
         >
           Cadastre-se <v-icon icon="mdi-chevron-right"></v-icon>
-        </a>
+      </span>
       </v-card-text>
     </v-card>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed } from 'vue'
+<script lang="ts">
+import User from '@/domain/User';
+import { defineComponent } from 'vue'
+import UserService from '@/domain/UserService'
 
-let showPassword = ref(false);
-
-function changeShowPassword() {
-  showPassword.value = !showPassword.value
-}
+export default defineComponent({
+  name: 'Login',
+  data() {
+    return {
+      showPassword: false,
+      user: new User()
+    }
+  },
+  methods: {
+    changeShowPassword() {
+      this.showPassword = !this.showPassword
+    },
+    login() {
+      UserService.login(this.user).then((json) => {
+        localStorage.setItem('patientId', json.id)
+        this.$emit('logged')
+      });
+    },
+    changeMode() {
+      this.$emit('changeMode')
+    }
+  },
+})
 </script>
+
+<style lang="css" scoped>
+.change-mode:hover {
+  cursor: pointer;
+}
+</style>
